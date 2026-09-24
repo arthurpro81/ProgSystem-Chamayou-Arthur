@@ -74,19 +74,32 @@ public class Utils {
 	}
 	
 	public static int writeString(byte[] memory, int offset, String str, int maxLength) {
-		// TODO:
 		// 1. Convertir la chaîne en octets.
+		
+		byte[] bytes = str.getBytes();
+		int length = Math.min(bytes.length, maxLength);
+
 		// 2. Copier les octets sans dépasser maxLength.
+		for (int i = 0; i < length; i++) {
+			memory[offset + i] = bytes[i];
+		}
+
 		// 3. Nettoyer le reste de la zone avec des zéros.
+		for (int i = length; i < maxLength; i++) {
+			memory[offset + i] = 0;
+		}
 
 		return maxLength;
+
 	}
 
 	public static String readString(byte[] memory, int offset, int maxLength) {
-		// TODO:
-		// Lire jusqu'au premier octet nul
-		// ou jusqu'à maxLength.
+		// code ne marche pas encore 
+		String resultat = "";
+		for (int i = 0;i < maxLength && memory[offset+i] != 0; i++) {
+			resultat = resultat + memory[offset+i];
+		}
 
-		return "";
+		return resultat;
 	}
 }
