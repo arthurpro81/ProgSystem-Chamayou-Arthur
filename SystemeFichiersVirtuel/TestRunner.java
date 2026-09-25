@@ -1,6 +1,6 @@
 /*
- * TestRunner.java
- * Fichier de tests pour valider les étapes du TP VFS
+ * TestRunner.java                                          16/09/2026
+ * IUT de Rodez pas de copyright ni de copyleft
  */
 
 public class TestRunner {
@@ -12,7 +12,10 @@ public class TestRunner {
         testStep2();
 
         // Étape 3
-        // testStep3();
+        testStep3();
+		
+		// Étape 4
+        testStep4();
 
         System.out.println("tous les tests sont passée");
     }
@@ -99,6 +102,53 @@ public class TestRunner {
 				"Erreur writeString / readString";
 
 		System.out.println("[OK] Étape 3 validée !");
+	}
+	
+	public static void testStep4() {
+		
+		System.out.println("=== TEST ÉTAPE 4 : Initialisation Mémoire ===");
+
+		MemoryManager mm = new MemoryManager();
+
+		byte[] mem = mm.getFilesystemMemory();
+
+		assert mem != null :
+				"La mémoire ne doit pas être nulle";
+
+		assert mem.length == MemoryManager.TOTAL_MEMORY :
+				"Taille mémoire incorrecte";
+
+		assert Utils.readString(
+				mem,
+				MemoryManager.SUPERBLOCK_OFFSET,
+				16).equals("MYFS1.0") :
+				"Signature du superbloc incorrecte";
+
+		assert Utils.readInt(
+				mem,
+				MemoryManager.SUPERBLOCK_OFFSET + 16)
+				== MemoryManager.BLOCK_SIZE :
+				"Taille de bloc incorrecte";
+
+		assert Utils.readInt(
+				mem,
+				MemoryManager.SUPERBLOCK_OFFSET + 20)
+				== MemoryManager.TOTAL_MEMORY :
+				"Taille mémoire incorrecte";
+
+		assert Utils.readInt(
+				mem,
+				MemoryManager.SUPERBLOCK_OFFSET + 24)
+				== MemoryManager.NUM_BLOCKS :
+				"Nombre de blocs incorrect";
+
+		assert Utils.readInt(
+				mem,
+				MemoryManager.SUPERBLOCK_OFFSET + 28)
+				== MemoryManager.MAX_INODES :
+				"Nombre maximal d'inodes incorrect";
+
+		System.out.println("[OK] Étape 4 validée !");
 	}
 
 }
