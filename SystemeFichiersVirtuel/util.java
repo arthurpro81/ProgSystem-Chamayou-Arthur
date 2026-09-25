@@ -9,7 +9,7 @@ public class Utils {
 	 * cette classe permet de convertir des valeurs (int, short,long et String) 
 	 * en une suite d'octets stockée dans un tableau,
 	 * et de reconstituer ces valeurs à partir du tableau.
-	 * int, short et long sont implémenter et fini
+	 * int, short, long et String sont implémenter et fini
 	 */
 	
     public static int writeInt(byte[] memory, int offset, int value) {
@@ -94,10 +94,10 @@ public class Utils {
 	}
 
 	public static String readString(byte[] memory, int offset, int maxLength) {
-		// code ne marche pas encore 
+		
 		String resultat = "";
 		for (int i = 0;i < maxLength && memory[offset+i] != 0; i++) {
-			resultat = resultat + memory[offset+i];
+			resultat = resultat + (char) memory[offset+i]);
 		}
 
 		return resultat;
