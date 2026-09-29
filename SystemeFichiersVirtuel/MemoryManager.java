@@ -30,19 +30,17 @@ public class MemoryManager {
     }
 
     private void initializeFilesystem() {
-        writeSuperblock();
 
         // Réserver les blocs système 0 à 128.
 		for (int bloc=0; bloc<=128; bloc++){
-			
 			// on cherche l'octet puis le bit qui corespond a l'octet
 			int byteIndex = bloc / 8;
 			int bitIndex = bloc % 8;
-			
 			// note : "|" permet de mettre bit a 1
-			memory[BITMAP_OFFSET + byteIndex] |= (1 << bitIndex);
+			memory[BITMAP_OFFSET + byteIndex] |= (byte) (1 << bitIndex);
 			
 		}
+        
     }
 
     private void writeSuperblock() {
@@ -89,11 +87,11 @@ public class MemoryManager {
 		int offset = BITMAP_OFFSET + byteIndex;
 
 		if (used) {
-			// TODO:
 			// Positionner le bit à 1.
+			memory[offset] |= (byte) (1 << bitPosition);
 		} else {
-			// TODO:
 			// Positionner le bit à 0.
+			memory[offset] &= (byte) ~(1 << bitPosition);
 		}
 
 		return true;
@@ -110,6 +108,16 @@ public class MemoryManager {
 		// Calculer byteIndex.
 		// Calculer bitPosition.
 		// Lire le bit.
+		
+		int byteIndex = blockNumber / 8;
+        int bitIndex = blockNumber % 8;
+        int offset = BITMAP_OFFSET + byteIndex;
+
+        // Lire l'octet contenant le bit.
+        int data = memory[offset] & 0xFF;
+
+        // Extraire le bit demandé.
+        return (data >> bitIndex) & 0x1;
 
 		return -1;
 	}
@@ -122,7 +130,19 @@ public class MemoryManager {
 		//
 		// Retourner le premier bloc libre.
 		// Le marquer immédiatement comme utilisé.
+		for (int block = DATA_OFFSET / BLOCK_SIZE;
+             block < NUM_BLOCKS;
+             block++) {
 
+            if (isBlockUsed(block) == 0) {
+
+                // Marquer immédiatement le bloc comme utilisé.
+                setBlockUsed(block, true);
+
+                return block;
+            }
+        }
+		
 		return -1;
 	}
 }
