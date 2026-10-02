@@ -1,5 +1,5 @@
 /*
- * Utils.java                                          16/09/2026
+ * Utils.java                                                  16/09/2026
  * IUT de Rodez pas de copyright ni de copyleft
  */
 
@@ -97,7 +97,7 @@ public class Utils {
 		
 		String resultat = "";
 		for (int i = 0;i < maxLength && memory[offset+i] != 0; i++) {
-			resultat = resultat + (char) memory[offset+i]);
+			resultat = resultat + (char) memory[offset+i];
 		}
 
 		return resultat;
