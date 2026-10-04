@@ -1,3 +1,8 @@
+/*
+ * Inode.java                                          04/10/2026
+ * IUT de Rodez pas de copyright ni de copyleft
+ */
+
 public class Inode {
 
     private MemoryManager memoryManager;
@@ -51,4 +56,52 @@ public class Inode {
         }
         return pointers;
     }
+	
+	public void writeToMemory(
+        int fileType,
+        int fileSize,
+        long creationTime,
+        long modificationTime,
+        int[] directPointers,
+        int indirectPointer,
+        short permissions,
+        int linkCount) {
+
+		byte[] memory =
+				memoryManager.getFilesystemMemory();
+
+		int offset = getInodeOffset();
+
+
+		// 1. Numéro d'inode
+		offset += Utils.writeInt(memory,offset ,inodeNumber);
+		
+		// 2. Type
+		offset += Utils.writeInt(memory,offset ,fileType);
+		
+		// 3. Taille
+		offset += Utils.writeInt(memory,offset ,fileSize);
+		
+		// 4. Création
+		offset += Utils.writeLong(memory,offset ,creationTime);
+		
+		// 5. Modification
+		offset += Utils.writeLong(memory,offset ,modificationTime);
+		
+		// 6. 10 pointeurs directs
+		for (int i = 0; i < DIRECT_POINTERS; i++) {
+            offset += Utils.writeInt(memory, offset, directPointers[i]);
+        }
+		
+		// 7. Pointeur indirect
+		offset += Utils.writeInt(memory, offset, indirectPointer);
+		
+		// 8. Permissions
+		offset += Utils.writeShort(memory, offset, permissions);
+		
+		// 9. Nombre de liens
+		offset += Utils.writeInt(memory, offset, linkCount);
+        
+        
+	}
 }

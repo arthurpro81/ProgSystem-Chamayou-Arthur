@@ -31,15 +31,19 @@ public class MemoryManager {
 
     private void initializeFilesystem() {
 
-        // Réserver les blocs système 0 à 128.
-		for (int bloc=0; bloc<=128; bloc++){
-			// on cherche l'octet puis le bit qui corespond a l'octet
-			int byteIndex = bloc / 8;
-			int bitIndex = bloc % 8;
-			// note : "|" permet de mettre bit a 1
-			memory[BITMAP_OFFSET + byteIndex] |= (byte) (1 << bitIndex);
-			
-		}
+		writeSuperblock();
+
+		setBlockUsed(0, true); // superblock
+        setBlockUsed(1, true); // bitmap
+
+        for (int i = 2; i < 128; i++) {
+            setBlockUsed(i, true); // inode table blocks
+        }
+
+        for (int i = 0; i < MAX_INODES; i++) {
+            int inodeOffset = INODE_TABLE_OFFSET + i * INODE_SIZE;
+            Utils.writeInt(memory, inodeOffset, -1);
+        }
         
     }
 
@@ -119,16 +123,13 @@ public class MemoryManager {
 	}
 
 	public int allocateBlock() {
-
-		for (int block = 129;
-             block < NUM_BLOCKS;
-             block++) {
-
-            if (isBlockUsed(block) == 0) {
-                setBlockUsed(block, true);
-                return block;
-            }
-        }
+		
+		for (int block = 129; block < NUM_BLOCKS; block++) {
+			if (isBlockUsed(block) == 0) {
+				setBlockUsed(block, true);
+				return block;
+			}
+		}
 		return -1;
 	}
 }
