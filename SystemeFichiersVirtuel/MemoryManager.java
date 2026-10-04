@@ -33,11 +33,11 @@ public class MemoryManager {
 
 		writeSuperblock();
 
-		setBlockUsed(0, true); // superblock
-        setBlockUsed(1, true); // bitmap
+		setBlockUsed(0, true);
+        setBlockUsed(1, true);
 
         for (int i = 2; i < 128; i++) {
-            setBlockUsed(i, true); // inode table blocks
+            setBlockUsed(i, true);
         }
 
         for (int i = 0; i < MAX_INODES; i++) {
