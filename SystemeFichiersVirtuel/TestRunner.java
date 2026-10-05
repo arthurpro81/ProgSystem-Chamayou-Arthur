@@ -27,7 +27,7 @@ public class TestRunner {
         testStep7();
 		
 		// Étape 8
-        //testStep8();
+        testStep8();
 
         System.out.println("tous les tests sont passée");
     }

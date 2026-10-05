@@ -20,14 +20,13 @@ public class VirtualFileSystem {
                 memoryManager.getFilesystemMemory();
 
         // Parcourir les inodes de 0 à MAX_INODES - 1.
-		for (int i = 0; i < MemoryManager.MAX_INODES-1; i++) {
-		
-		// TODO:
-		// Identifier le premier inode libre (if).
-			// Retourner son numéro.
-            
+		for (int i = 0; i < MemoryManager.MAX_INODES; i++) {
+			int offsetInode = MemoryManager.INODE_TABLE_OFFSET + i * Inode.INODE_SIZE;
+			int numeroInode = Utils.readInt(memory, offsetInode);
+			if (numeroInode != i) {
+				return i;
+			}
         }
-
         return -1;
     }
 
@@ -41,9 +40,11 @@ public class VirtualFileSystem {
             return false;
         }
 
-        // TODO:
-        // Construire l'inode.
-        // L'initialiser comme fichier vide.
+        Inode variableInode = new Inode(memoryManager, inodeNum);
+        long TempActuel = System.currentTimeMillis();
+
+        variableInode.writeToMemory(1,0,TempActuel,TempActuel,
+		                    new int[Inode.DIRECT_POINTERS],0,(short) 0644,1);
 
         return true;
     }
