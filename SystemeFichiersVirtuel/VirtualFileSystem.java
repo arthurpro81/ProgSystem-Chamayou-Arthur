@@ -146,5 +146,32 @@ public class VirtualFileSystem {
 		}
 		return fileData;
 	}
+	
+	public boolean deleteFile(int inodeNum) {
+
+		if (inodeNum < 0 || inodeNum >= MemoryManager.MAX_INODES) {
+			return false;
+		}
+
+		byte[] memory = memoryManager.getFilesystemMemory();
+
+		// 1. Récupérer l'inode
+		Inode inode = new Inode(memoryManager, inodeNum);
+
+		// 2. Libérer les blocs utilisés
+		int[] pointers = inode.getDirectPointers();
+
+		for (int bloc : pointers) {
+			if (bloc != -1) {
+				memoryManager.setBlockUsed(bloc, false);
+			}
+		}
+
+		// 3. Marquer l'inode comme libre
+		int inodeOffset = inode.getInodeOffset();
+		Utils.writeInt(memory, inodeOffset, -1);
+
+		return true;
+	}
 
 }
