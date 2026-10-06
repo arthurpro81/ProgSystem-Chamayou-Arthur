@@ -2,7 +2,9 @@
  * VirtualFileSystem.java                                         04/10/2026
  * IUT de Rodez pas de copyright ni de copyleft
  */
-
+ 
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class VirtualFileSystem {
@@ -172,6 +174,27 @@ public class VirtualFileSystem {
 		Utils.writeInt(memory, inodeOffset, -1);
 
 		return true;
+	}
+	
+	public boolean writeExternalFile(String filename) {
+
+		StringBuilder sBuilder = new StringBuilder();
+		
+		try (FileReader reader = new FileReader(filename)) {
+			char[] buffer = new char[1024];
+			int compteur;
+			while ((compteur = reader.read(buffer)) != -1) {
+				sBuilder.append(buffer, 0, compteur);
+			}
+		} catch (IOException e) {
+			return false;
+		}
+		
+		byte[] data = sBuilder.toString().getBytes();
+		if (!createFile("/", "texte.txt")) {
+			return false;
+		}
+		return writeFile(0, data);
 	}
 
 }
