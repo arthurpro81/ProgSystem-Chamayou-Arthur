@@ -1,1 +1,67 @@
-plein de texte
+Question 1
+
+Il est nécessaire de définir une convention comme big-endian pour que les octets d’une structure soit stockés et interprétés toujours dans le même ordre. Sa permet d’avoir une représentation identique peut importe la machine.
+
+Par ex si `writeInt` écrit une valeur en big-endian mais que `readInt` la lit en little-endian les octets seraient interprétés dans le mauvais ordre donc la valeur reconstruite serait fausse.
+
+Question 2
+
+L’opération `memory[offset] & 0xFF` permet de considérer l’octet comme une valeur non signée comprise entre [0,255].
+
+En Java le type `byte` est signé et prend des valeurs de [-128,127]. Avec `& 0xFF` on ne garde que les 8 bits de l’octet et on evite que le bit de signe modifie la valeur lors de la reconstruction d’un entier.
+
+L’opérateur `&` est un opérateur binaire qui effectue un ET bit à bit entre 2 valeurs. Ici `0xFF` permet de conserver uniquement les 8 bits de l’octet.
+
+Question 3
+
+Tester uniquement `readInt(writeInt(x)) == x` permet de vérifier que l’écriture et la lecture fonctionnent ensemble mais ce test marche pas si il y a une erreur dans `writeInt` et une erreur inverse dans `readInt` sa pourraient par ex se compenser et faire quand même passer le test.
+
+Donc faut tester x avec des valeurs positives,négatives,nulles et les valeurs limites(max et min).
+
+L’inspection directe des octets permet de vérif que chaque octet est  écrit au bon endroit et dans le bon ordre. Sa permet donc de détecter des erreurs que le simple test aller-retour pourrait ne pas voir.
+
+Question 4
+
+Un bitmap est plus compact car chaque bloc est représenté par seulement 1 bit.
+
+Si on utilise un entier par bloc sa utilise beaucoup plus de mémoire puisqu'un entier Java occupe 4 octets. Pour `N` blocs le bitmap a donc : N bits soit N / 8 octets.
+
+Il est donc beaucoup plus compact qu’une représentation avec un entier par bloc.
+
+Question 5
+
+Les structures du système de fichiers doivent occuper des zones mémoire déterministes afin que le système sache exactement ou trouver chaque info. Il doit savoir ou se trouvent le bitmap,les inodes et les blocs de données.
+
+Si la position du bitmap changeait sans modifier les méthodes qui l'utilisent ces méthode continueraient à chercher le bitmap à l'ancienne position. Elles liraient donc de mauvaises données entrainant des erreurs d'allocation.
+
+Question 6
+
+Il faut séparer les métadonnées du fichier de son contenu pour gérer les infos du fichier indépendamment des données qu’il contient.
+
+Un inode contient par ex des infos comme la taille du fichier et les références vers les blocs où sont stockées ses données. Il ne contient donc pas directement le contenu du fichier mais il permet de retrouver les blocs qui le contiennent.
+
+On peut donc considérer l’inode comme une structure qui indique où retrouver le contenu du fichier.
+
+Question 7
+
+`allocateBlock()` doit commencer à rechercher à partir du bloc 129 car les blocs précédents sont réservés aux structures du système de fichiers.
+
+Si la recherche commençait au bloc 0 la méthode pourrait sélectionner un bloc utilisé par le système lui-même, comme le superbloc, le bitmap ou les inodes. Sa risquerait d’écraser des infos importantes et de rendre le système de fichiers incoherent.
+
+Question 8
+
+Oui 2 systèmes peuvent avoir exactement le même nombre de blocs libres tout en ayant des niveaux de fragmentation différents.
+
+Par exemple, avec 8 blocs :
+
+Système A :
+L L L L O O O O
+
+Les blocs libres sont regroupés au début donc 1 seul espace libre de 4 blocs.
+
+Système B :
+L O L O L O L O
+
+Il y a 4 blocs libres mais ils sont répartis entre les blocs occupés. L’espace libre est donc beaucoup plus fragmenté.
+
+Les 2 systèmes ont le même nombre de blocs libres mais la disposition de ces blocs est différente. La fragmentation dépend donc de la quantité d’espace libre et aussi de la manière dont cet espace est réparti.

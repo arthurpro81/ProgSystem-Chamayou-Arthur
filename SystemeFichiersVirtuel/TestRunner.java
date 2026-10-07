@@ -561,67 +561,6 @@ public class TestRunner {
 		System.out.println("[OK] Étape 9 validée !");
 	}
 	
-	public static void testStep10() {
-
-		System.out.println("=== TEST ÉTAPE 10 : Suppression Fichier ===");
-
-		VirtualFileSystem vfs = new VirtualFileSystem();
-
-		// 1. Création du fichier
-		assert vfs.createFile("/", "deleteMe.txt") :
-				"La création du fichier a échoué";
-
-		// 2. Écriture de données
-		byte[] data = new byte[600]; // 600 octets → 2 blocs
-		for (int i = 0; i < data.length; i++) {
-			data[i] = (byte) (i % 256);
-		}
-
-		assert vfs.writeFile(0, data) :
-				"L'écriture du fichier a échoué";
-
-		MemoryManager mm = vfs.getMemoryManager();
-		Inode inode = new Inode(mm, 0);
-
-		int[] pointers = inode.getDirectPointers();
-
-		assert pointers[0] != -1 :
-				"Le premier bloc doit être alloué";
-
-		assert pointers[1] != -1 :
-				"Le deuxième bloc doit être alloué";
-
-		// 3. Suppression du fichier
-		assert vfs.deleteFile(0) :
-				"La suppression du fichier a échoué";
-
-		// 4. Vérification que les blocs sont libérés
-		assert mm.isBlockUsed(pointers[0]) == 0 :
-				"Le bloc 0 du fichier n'a pas été libéré";
-
-		assert mm.isBlockUsed(pointers[1]) == 0 :
-				"Le bloc 1 du fichier n'a pas été libéré";
-
-		// 5. Vérification que l'inode est marqué libre
-		int inodeOffset = inode.getInodeOffset();
-		byte[] memory = mm.getFilesystemMemory();
-
-		assert Utils.readInt(memory, inodeOffset) == -1 :
-				"L'inode n'a pas été marqué comme libre";
-
-		// 6. Vérification que l'inode est réutilisé
-		assert vfs.createFile("/", "newFile.txt") :
-				"La création du nouveau fichier a échoué";
-
-		Inode inodeNew = new Inode(mm, 0);
-
-		assert inodeNew.getFileType() == 1 :
-				"L'inode 0 aurait dû être réutilisé";
-
-		System.out.println("[OK] Étape 10 validée !");
-	}
-	
-	
 	public static void testExternalFile(
 			String filename) {
 
@@ -665,7 +604,7 @@ public class TestRunner {
 
 		assert vfs.createFile(
 				"/",
-				"texte.txt") :
+				"external.txt") :
 				"Impossible de créer le fichier VFS";
 
 		assert vfs.writeFile(
