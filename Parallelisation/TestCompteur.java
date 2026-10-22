@@ -3,7 +3,7 @@
  * IUT de Rodez aucun copyright
  */
  
-public class TestCompteur extends CompteurDangereux {
+public class TestCompteur {
 
     public final static int NB_TESTS = 50;
 
@@ -51,13 +51,13 @@ public class TestCompteur extends CompteurDangereux {
 			if (valeurGlobale < minimum) {
 				minimum = valeurGlobale;
 			}
-
-			pourcentageDeReussite = (nbReussite * 100 / NB_TESTS);
-			System.out.println("---AFFICHAGE ---");
-			System.out.println("Nombre de réussite sur " + NB_TESTS + ":" + nbReussite);
-			System.out.println("Pourcentage de réussite sur " + NB_TESTS + ":" + pourcentageDeReussite + "%");
-			System.out.println("Valeur minimale obtenue sur " + NB_TESTS + ":" + minimum);
-			System.out.println("Valeur maximale obtenue sur " + NB_TESTS + ":" + maximum);
 		}
+
+		pourcentageDeReussite = (nbReussite * 100 / NB_TESTS);
+		System.out.println("---AFFICHAGE ---");
+		System.out.println("Nombre de réussite sur " + NB_TESTS + ":" + nbReussite);
+		System.out.println("Pourcentage de réussite sur " + NB_TESTS + ":" + pourcentageDeReussite + "%");
+		System.out.println("Valeur minimale obtenue sur " + NB_TESTS + ":" + minimum);
+		System.out.println("Valeur maximale obtenue sur " + NB_TESTS + ":" + maximum);
 	}
 } 
