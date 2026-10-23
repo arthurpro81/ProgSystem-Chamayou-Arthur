@@ -1,0 +1,15 @@
+Ordre des acquire() : Que se passe-t-il si on inverse placesLibres.acquire() et mutexBuffer.acquire() ?
+
+Si on inverse l’ordre on risque un blocage : un thread peut prendre le mutex puis attendre une place libre
+ce qui empeche les autres threads d’accéder au buffer donc il vaut mieux prendre d’abord une place libre, puis le mutex.
+
+Cohérence : Les compteurs de production/consommation s’équilibrent-ils ?
+
+Oui si tous les threads terminent normalement le nb de produits fabriqués et consommés doit être égal. 
+Le buffer doit alors être vide.
+
+Blocages : Dans quelles conditions le système peut-il se bloquer ?
+
+Le système peut se bloquer si aucun produit n’est disponible pour un consommateur, 
+si le buffer est plein pour un producteur, 
+ou si un thread est interrompu alors qu’il detient un sémaphore sans le libérer corectement.
